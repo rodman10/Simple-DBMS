@@ -1,0 +1,94 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    FOREIGN
+    NULL
+    IS
+    BY
+    CONSTRAINT
+    ORDER
+    ASC
+    CHECK
+    UNION
+    AS
+    IN
+    UNIQUE
+    ON
+    ALL
+    PRIMARY
+    KEY
+    ANY
+
+Grammar
+
+Rule 0     S' -> expression_set
+Rule 1     expression_set -> expression_set expression_sql
+Rule 2     expression_set -> expression_sql
+Rule 3     expression_sql -> expression_create_database
+Rule 4     expression_sql -> expression_show_database
+Rule 5     expression_sql -> expression_use_database
+Rule 6     expression_sql -> expression_exit
+Rule 7     expression_sql -> expression_comments
+Rule 8     expression_sql -> expression_show_tables
+Rule 9     expression_sql -> expression_create_table
+Rule 10    expression_sql -> expression_drop_table
+Rule 11    expression_sql -> expression_insert_table
+Rule 12    expression_sql -> expression_select_table
+Rule 13    expression_sql -> expression_update_table
+Rule 14    expression_sql -> expression_delete_from_table
+Rule 15    expression_show_database -> SHOW DATABASES ;
+Rule 16    expression_create_database -> CREATE DATABASE ID ;
+Rule 17    expression_use_database -> USE ID ;
+Rule 18    expression_create_database -> DROP DATABASE ID ;
+Rule 19    expression_exit -> EXIT
+Rule 20    expression_exit -> EXIT ;
+Rule 21    expression_show_tables -> SHOW TABLES ;
+Rule 22    expression_create_table -> CREATE TABLE ID ( table_fields_definition ) ;
+Rule 23    expression_insert_table -> INSERT INTO ID ( fields ) VALUES ( given_values ) ;
+Rule 24    expression_insert_table -> INSERT INTO ID VALUES ( given_values ) ;
+Rule 25    expression_select_table -> SELECT * FROM tables ;
+Rule 26    expression_select_table -> SELECT fields FROM tables ;
+Rule 27    expression_select_table -> SELECT * FROM tables WHERE expression_logic ;
+Rule 28    expression_select_table -> SELECT fields FROM tables WHERE expression_logic ;
+Rule 29    expression_update_table -> UPDATE ID SET column_values ;
+Rule 30    expression_update_table -> UPDATE ID SET column_values WHERE expression_logic ;
+Rule 31    column_values -> column_values , column_value
+Rule 32    column_values -> column_value
+Rule 33    column_value -> ID = NUMBER
+Rule 34    column_value -> ID = STRING
+Rule 35    expression_delete_from_table -> DELETE FROM ID ;
+Rule 36    expression_delete_from_table -> DELETE FROM ID WHERE expression_logic ;
+Rule 37    tables -> tables JOIN ID on ID
+Rule 38    tables -> tables , ID
+Rule 39    tables -> ID
+Rule 40    fields -> fields , ID
+Rule 41    fields -> ID
+Rule 42    given_values -> given_values , given_value
+Rule 43    given_values -> given_value
+Rule 44    given_value -> NUMBER
+Rule 45    given_value -> STRING
+Rule 46    expression_drop_table -> DROP TABLE ID ;
+Rule 47    table_fields_definition -> table_fields_definition , table_field_definition
+Rule 48    table_fields_definition -> table_field_definition
+Rule 49    table_field_definition -> ID CHAR ( NUMBER )
+Rule 50    table_field_definition -> ID INT
+Rule 51    table_field_definition -> ID VARCHAR ( NUMBER )
+Rule 52    expression_comments -> COMMENT
+Rule 53    expression_logic -> expression_logic AND expression_logic
+Rule 54    expression_logic -> expression_logic OR expression_logic
+Rule 55    expression_logic -> ( expression_logic )
+Rule 56    expression_logic -> NOT expression_logic
+Rule 57    expression_logic -> BOOLEAN
+Rule 58    expression_logic -> expression_comp
+Rule 59    expression_comp -> expression_comp_member > expression_comp_member
+Rule 60    expression_comp -> expression_comp_member < expression_comp_member
+Rule 61    expression_comp -> expression_comp_member = expression_comp_member
+Rule 62    expression_comp -> expression_comp_member NOTEQUALS expression_comp_member
+Rule 63    expression_comp_member -> expression_arith
+Rule 64    expression_comp_member -> variable
+Rule 65    expression_comp_member -> STRING
+Rule 66    expression_arith -> expression_arith + expression_arith
+Rule 67    expression_arith -> expression_arith - expression_arith
+Rule 68    expression_arith -> expression_arith * expression_arith
+Ru
