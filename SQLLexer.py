@@ -65,17 +65,12 @@ class SQLLexer(object):
         'ID',
         'STRING',
         'COMMENT',
-             ] + list(reserved.values())
+    ] + list(reserved.values())
 
-             # Literals.  Should be placed in module given to lex()
-    # literals = ['+', '-', '*', '/', '>', '<', '=', '(', ')', ',', ';']
     literals = '+-*/<>()=,;'
 
-    # Regular expression rules for simple tokens
     t_NOTEQUALS = '!='
 
-    # A regular expression rule with some action code
-    # Note addition of self parameter since we're in a class
     def t_NUMBER(self, t):
         r'\d+'
         t.value = int(t.value)
@@ -126,43 +121,3 @@ class SQLLexer(object):
              if not tok:
                  break
              print(tok)
-
-if __name__ == "__main__":
-    data = '''
-    3 + 4
-    selEct e,d fRom hello
-    where 1=2 anD 255<3;
-    'nihao'
-    "jdsa d aow pap hfp"
-    //comments
-    '''
-    data = '''
-SELECT SNAME,SAGE FROM STUDENT JOIN TEACHER;
-SELECT * FROM STUDENT;
-SELECT SNAME,SAGE FROM STUDENT WHERE SAGE=21;
-SELECT SNAME,SAGE FROM STUDENT WHERE (((SAGE=21)));
-SELECT SNAME,SAGE FROM STUDENT WHERE (SAGE>21) AND (SSEX=0);
-SELECT SNAME,SAGE FROM STUDENT WHERE (SAGE>21) OR (SSEX=0);
-SELECT * FROM STUDENT WHERE SSEX!=1;
-// 测试多表查询
-SELECT * FROM STUDENT;SELECT * FROM COURSE;
-select * from student,course;
-SELECT * FROM STUDENT,COURSE WHERE (SSEX=0) AND (CID=1);
-//测试DELETE语句
-SELECT * FROM STUDENT;
-DELETE FROM STUDENT WHERE (SAGE>21) AND (SSEX=0);
-SELECT * FROM STUDENT;
-//测试UPDATE
-SELECT * FROM STUDENT;
-UPDATE STUDENT SET SAGE=21 WHERE SSEX=1;
-SELECT * FROM STUDENT;
-UPDATE STUDENT SET SAGE=27,SSEX=1 WHERE SNAME='ZHANGSAN';
-SELECT * FROM STUDENT;
-    '''
-    #data = 'true and false "sasas exit" Quit'
-    #data = '1+2 true'
-
-    # Build the lexer and try it out
-    m = SQLLexer()
-    m.build()        # Build the lexer
-    m.test(data)     # Test it

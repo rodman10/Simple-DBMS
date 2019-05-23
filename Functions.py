@@ -158,7 +158,7 @@ class Functions(object):
                     if line.split('|')[0] == tbl_name:
                         column_types = line.split('|')[1:]
             for c in column_types:
-                column_names.append(c.split()[0])
+                column_names.append(tbl_name + '.' + c.split()[0])
             return column_names, column_types
         else:
             raise Exception("SQLError: No database selected!")
@@ -228,24 +228,79 @@ class Functions(object):
                 self.table_cache.append([column_names, table_content])
 
     @staticmethod
-    def product(a,b):
-        return map(lambda i: map(lambda j: i+j, b), a)
-        
+    def product(a, b, c1=None, c2=None):
+        # tmp =  map(lambda i: \
+        #                     map(lambda j: \
+        #                         (i,j), \
+        #                             b), \
+        #                                 a)
+        # res = filter(lambda ri: \
+        #             ri, \
+        #             # c1 is None and c2 is None or ri[c1] == rj[c2], \
+        #                 map(lambda i: \
+        #                     map(lambda j: \
+        #                         (i,j), \
+        #                             b), \
+        #                                 a))
+
+        return map(lambda (ri ,rj): \
+            ri+rj, \
+                filter(lambda (ri, rj): \
+                    c1 is None and c2 is None or ri[c1] == rj[c2], \
+                        reduce(lambda l1,l2: \
+                            l1 + l2, \
+                                map(lambda i: \
+                                    map(lambda j: \
+                                        (i,j), \
+                                            b), \
+                                                a))))
+            
     def select_table(self, table, condition):
         if self.currentdb:
+            def exists_helper(t):
+                if isinstance(t, tuple):
+                    exists_helper(t[0])
+                    exists_helper(t[1])
+                else:
+                    if not self.table_exists(t): 
+                        raise Exception("SQLError: table '%s' doesn't exist!" % t)
+                    self.using_tables.append(t)
+            
             for t in table[0]:
-                if not self.table_exists(t): 
-                    raise Exception("SQLError: table '%s' doesn't exist!" % t)
-            self.using_tables = table[0]
+                exists_helper(t)
+            
+            # self.using_tables = table[0]
             self.cache_tables()
             select_columns = table[1]
-            pxx = self.table_cache[0][1]
-            all_column_names = self.table_cache[0][0]
+
+            def product_helper(t1, t2, c):
+                c1, p1 = product_helper(*t1) \
+                    if isinstance(t1, tuple) \
+                        else \
+                            self.table_cache[self.using_tables.index(t1)]
+            
+                c2, p2 = product_helper(*t2) \
+                    if isinstance(t2, tuple) \
+                        else \
+                            self.table_cache[self.using_tables.index(t2)]
+                return c1 + c2, self.product(p1, p2, c1.index(t1+'.'+c), c2.index(t2+'.'+c))
+
+            all_column_names, pxx = product_helper(*table[0][0]) \
+                if isinstance(table[0][0], tuple) \
+                    else self.table_cache[0]
+
             result_set = []
-            for each_table_cache in self.table_cache[1:]:
-                if each_table_cache[1]:
-                    pxx = self.product(pxx, each_table_cache[1])
-                    all_column_names.extend(each_table_cache[0])
+            for t in table[0][1:]:
+                t_column_names, t_pxx = product_helper(*t) \
+                    if isinstance(t, tuple) \
+                        else self.table_cache[self.using_tables.index(t)]
+
+                pxx = self.product(pxx, t_pxx)
+                all_column_names.extend(t_column_names)
+            # for each_table_cache in self.table_cache[1:]:
+            #     if each_table_cache[1]:
+            #         pxx = self.product(pxx, each_table_cache[1])
+            #         all_column_names.extend(each_table_cache[0])
             self.current_column[0] = all_column_names
             for each in pxx:
                 self.current_column[1] = each
