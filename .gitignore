@@ -2,3 +2,4 @@ DBMS/
 .vscode
 **/*.pyc
 parse*
+*.pdf

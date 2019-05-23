@@ -90,7 +90,7 @@ class SQLLexer(object):
         return t
 
     def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z_0-9]*'
+        r'[a-zA-Z_][a-zA-Z_0-9\.]*'
         t.type = self.reserved.get(str.lower(t.value), 'ID')  # Check for reserved words
         return t
 
